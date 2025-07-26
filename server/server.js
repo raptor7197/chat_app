@@ -17,11 +17,11 @@ const usernames = new Set(); // Track usernames to prevent duplicates
 
 wss.on('connection', (ws) => {
   console.log('New client connected');
-  
+
   ws.on('message', (data) => {
     try {
       const message = JSON.parse(data);
-      
+
       if (message.type === 'join') {
         // Handle user joining
         if (usernames.has(message.username)) {
@@ -31,36 +31,36 @@ wss.on('connection', (ws) => {
           }));
           return;
         }
-        
+
         // Register user
         clients.set(ws, {
           username: message.username,
           joinTime: new Date()
         });
         usernames.add(message.username);
-        
+
         console.log(`${message.username} joined the chat`);
-        
+
         // Send welcome message to user
         ws.send(JSON.stringify({
           type: 'system',
           message: `Welcome to the chat, ${message.username}!`
         }));
-        
+
         // Notify other users
         broadcast({
           type: 'system',
-          message: `🔔 ${message.username} has joined the chat`,
+          message: `---> ${message.username} has joined the chat`,
           userCount: clients.size
         }, ws);
-        
+
         // Send current user list
         ws.send(JSON.stringify({
           type: 'userList',
           users: Array.from(clients.values()).map(client => client.username),
           userCount: clients.size
         }));
-        
+
       } else if (message.type === 'chat') {
         // Handle chat message
         const clientInfo = clients.get(ws);
@@ -92,10 +92,10 @@ wss.on('connection', (ws) => {
       console.log(`${clientInfo.username} left the chat`);
       usernames.delete(clientInfo.username);
       clients.delete(ws);
-      
+
       broadcast({
         type: 'system',
-        message: `❌ ${clientInfo.username} has left the chat`,
+        message: ` ${clientInfo.username} has left the chat`,
         userCount: clients.size
       });
     }
@@ -104,7 +104,7 @@ wss.on('connection', (ws) => {
 
 function broadcast(message, excludeClient = null) {
   const messageStr = typeof message === 'string' ? message : JSON.stringify(message);
-  
+
   for (const [client, clientInfo] of clients) {
     if (client !== excludeClient && client.readyState === WebSocket.OPEN) {
       client.send(messageStr);

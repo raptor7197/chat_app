@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,7 +21,7 @@
 </head>
 <body>
   <h2>Multi-User WebSocket Chat</h2>
-  
+
   <div id="joinArea" class="join-area">
     <h3>Join the Chat</h3>
     <div class="input-area">
@@ -28,15 +29,15 @@
       <button onclick="joinChat()">Join Chat</button>
     </div>
   </div>
-  
+
   <div id="chatArea" class="chat-area hidden">
     <div class="user-list">
       <strong>Online Users (<span id="userCount">0</span>):</strong>
       <span id="userList">None</span>
     </div>
-    
+
     <div id="chat" class="chat-container"></div>
-    
+
     <div class="input-area">
       <input id="message" placeholder="Type your message..." />
       <button onclick="sendMessage()">Send</button>
@@ -51,7 +52,7 @@
     socket.addEventListener('message', function (event) {
       try {
         const data = JSON.parse(event.data);
-        
+
         if (data.type === 'error') {
           showMessage(data.message, 'error');
         } else if (data.type === 'system') {
@@ -106,7 +107,7 @@
       div.textContent = message;
       document.getElementById('chat').appendChild(div);
       document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-      
+
       // If it's a welcome message, show chat area
       if (message.includes('Welcome to the chat') && !isJoined) {
         isJoined = true;
@@ -129,7 +130,7 @@
     document.getElementById('username').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') joinChat();
     });
-    
+
     document.getElementById('message').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') sendMessage();
     });
